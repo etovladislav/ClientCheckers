@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import ru.kpfu.util.Request;
+import ru.kpfu.util.RequestError;
 import ru.kpfu.xml.TokenXml;
 
 import javax.xml.bind.JAXBContext;
@@ -16,9 +18,15 @@ public class MainApp extends Application {
     public static final int TILE_SIZE = 100;
 
 
-    private static Scene sceneLogin, sceneRegistration, sceneGame;
+    private static Scene sceneLogin, sceneRegistration, sceneGame, sceneMainMenu;
+
+    public static  String USER_TOKEN;
 
     public static Stage window;
+
+    public static Scene getSceneMainMenu() {
+        return sceneMainMenu;
+    }
 
     public static Scene getSceneGame() {
         return sceneGame;
@@ -41,10 +49,25 @@ public class MainApp extends Application {
         window = primaryStage;
         sceneRegistration = new Scene(new Registration().getRegistration());
         sceneGame = new Scene(new Game().getGame());
+        sceneMainMenu = new Scene(new MainMenu().getMainMenu(), 300, 250);
         sceneLogin = new Scene(new Login().getLogin());
         sceneLogin.getStylesheets().add("/styles/login.css");
         sceneRegistration.getStylesheets().add("/styles/login.css");
-        primaryStage.setScene(sceneLogin);
+        USER_TOKEN = loadPersonDataFromFile().getToken();
+        if (loadPersonDataFromFile() != null) {
+            Request request = new Request();
+            try {
+                if (request.get("api/checkToken?token=" + USER_TOKEN).equals("true")) {
+                    primaryStage.setScene(sceneMainMenu);
+                } else {
+                    primaryStage.setScene(sceneLogin);
+                }
+            } catch (RequestError requestError) {
+                requestError.printStackTrace();
+            }
+        }else {
+            primaryStage.setScene(sceneLogin);
+        }
         primaryStage.show();
     }
 
@@ -69,7 +92,7 @@ public class MainApp extends Application {
 
     public static void savePersonDataToFile(String token) {
         File file = new File("token.xml");
-        if(!file.exists()) {
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {

@@ -16,6 +16,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.chainsaw.Main;
 import ru.kpfu.util.Request;
 import ru.kpfu.util.RequestError;
 import ru.kpfu.xml.TokenXml;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.kpfu.MainApp.getSceneGame;
 import static ru.kpfu.MainApp.window;
 
 /**
@@ -88,7 +90,6 @@ public class Login {
         text.setId("text");
 
         btnLogin.setOnAction(event -> {
-            try {
                 String username = txtUserName.getText().toString();
                 String password = pf.getText().toString();
                 List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -100,6 +101,8 @@ public class Login {
                     TokenXml token = new TokenXml();
                     token.setToken(result);
                     MainApp.savePersonDataToFile(result);
+                    MainApp.USER_TOKEN = result;
+                    MainApp.window.setScene(MainApp.getSceneMainMenu());
                 } catch (RequestError requestError) {
                     System.err.println(requestError.getMessage());
                     lblMessage.setText("Error");
@@ -107,9 +110,6 @@ public class Login {
                 }
                 txtUserName.setText("");
                 pf.setText("");
-            } catch (IOException e) {
-                System.err.println("pi");
-            }
         });
         btnRegistration.setOnAction(event -> {
             window.setScene(MainApp.getSceneRegistration());

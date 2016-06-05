@@ -102,7 +102,6 @@ public class Registration {
                 urlParameters.add(new BasicNameValuePair("login", username));
                 urlParameters.add(new BasicNameValuePair("password", password));
                 Request request = new Request();
-                try {
                     String result = request.post("api/registration", urlParameters);
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Success");
@@ -118,9 +117,6 @@ public class Registration {
                 txtUserName.setText("");
                 pf.setText("");
                 cpf.setText("");
-            } catch (IOException e) {
-                System.err.println("pi");
-            }
         });
         btnLogin.setOnAction(event -> {
             window.setScene(MainApp.getSceneLogin());

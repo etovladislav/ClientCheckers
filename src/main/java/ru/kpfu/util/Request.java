@@ -22,45 +22,55 @@ import static org.apache.http.HttpHeaders.USER_AGENT;
  */
 public class Request {
 
-    public String post(String url, List<NameValuePair> data) throws IOException, RequestError {
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(Properties.SERVER_URL + url);
-        post.setHeader("User-Agent", USER_AGENT);
-        List<NameValuePair> urlParameters = data;
-        post.setEntity(new UrlEncodedFormEntity(urlParameters));
-        HttpResponse response = null;
-        response = client.execute(post);
-        BufferedReader rd = null;
-        rd = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
+    public String post(String url, List<NameValuePair> data) throws RequestError {
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpPost post = new HttpPost(Properties.SERVER_URL + url);
+            post.setHeader("User-Agent", USER_AGENT);
+            List<NameValuePair> urlParameters = data;
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = null;
+            response = client.execute(post);
+            BufferedReader rd = null;
+            rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
 
-        StringBuffer result = new StringBuffer();
-        String line = "";
-        while ((line = rd.readLine()) != null) {
-            result.append(line);
+            StringBuffer result = new StringBuffer();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            Integer responseStatus = response.getStatusLine().getStatusCode();
+            if (responseStatus != 200) {
+                throw new RequestError(result.toString());
+            }
+            return result.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        Integer responseStatus = response.getStatusLine().getStatusCode();
-        if (responseStatus != 200) {
-            throw new RequestError(result.toString());
-        }
-        return result.toString();
+        return null;
     }
 
-    public String get(String url) throws IOException, RequestError {
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet(url);
-        request.addHeader("User-Agent", USER_AGENT);
-        HttpResponse response = client.execute(request);
-        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        StringBuffer result = new StringBuffer();
-        String line = "";
-        while ((line = rd.readLine()) != null) {
-            result.append(line);
+    public String get(String url) throws RequestError {
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(Properties.SERVER_URL + url);
+            request.addHeader("User-Agent", USER_AGENT);
+            HttpResponse response = client.execute(request);
+            BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            StringBuffer result = new StringBuffer();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            Integer responseStatus = response.getStatusLine().getStatusCode();
+            if (responseStatus != 200) {
+                throw new RequestError(result.toString());
+            }
+            return result.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        Integer responseStatus = response.getStatusLine().getStatusCode();
-        if (responseStatus != 200) {
-            throw new RequestError(result.toString());
-        }
-        return result.toString();
+        return null;
     }
 }
