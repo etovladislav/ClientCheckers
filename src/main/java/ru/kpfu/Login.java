@@ -16,25 +16,19 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.chainsaw.Main;
 import ru.kpfu.util.Request;
 import ru.kpfu.util.RequestError;
 import ru.kpfu.xml.TokenXml;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.kpfu.MainApp.getSceneGame;
 import static ru.kpfu.MainApp.window;
 
 /**
  * Created by etovladislav on 30.05.16.
  */
 public class Login {
-    String user = "admin";
-    String pw = "1234";
-    String checkUser, checkPw;
 
     public BorderPane getLogin() {
 
@@ -114,7 +108,6 @@ public class Login {
         btnRegistration.setOnAction(event -> {
             window.setScene(MainApp.getSceneRegistration());
         });
-        //Add HBox and GridPane layout to BorderPane Layout
         bp.setTop(hb);
         bp.setCenter(gridPane);
         return bp;

@@ -1,5 +1,7 @@
 package ru.kpfu;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -7,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import ru.kpfu.util.Request;
 import ru.kpfu.util.RequestError;
 
@@ -15,7 +18,12 @@ import ru.kpfu.util.RequestError;
  */
 public class MainMenu {
 
+    private Timeline fiveSecondsWonder;
+    private Integer count = 0;
+    public static String GAME_ID;
+
     public StackPane getMainMenu() {
+        GAME_ID = null;
         MainApp.window.setTitle("Game!");
         Button btn = new Button();
         btn.setText("New game'");
@@ -29,10 +37,34 @@ public class MainMenu {
                 btn.setVisible(false);
                 Request request = new Request();
                 try {
-                    request.get("api/game/new?token="+MainApp.USER_TOKEN);
+                    GAME_ID = request.get("api/game/new?token=" + MainApp.USER_TOKEN);
                 } catch (RequestError requestError) {
                     requestError.printStackTrace();
                 }
+                fiveSecondsWonder = new Timeline(new KeyFrame(Duration.seconds(5), new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        try {
+                            String result = request.get("api/game/isReady?token=" + MainApp.USER_TOKEN + "&gameId=" + GAME_ID);
+                            if (result.equals("1") || result.equals("2")) {
+                                Game game = new Game();
+                                MainApp.window.setScene(new Scene(game.getGame()));
+                                game.setYourPice(result.equals("1") ? PieceType.WHITE : PieceType.RED);
+                                game.setIsYourMove(result.equals("1") ? Boolean.TRUE : Boolean.FALSE);
+                                if (result.equals("2")) {
+                                    game.waitMove();
+                                }
+                                fiveSecondsWonder.stop();
+                            }
+                        } catch (RequestError requestError) {
+                            requestError.printStackTrace();
+                        }
+                    }
+                }));
+
+                fiveSecondsWonder.setCycleCount(Timeline.INDEFINITE);
+                fiveSecondsWonder.play();
+
             }
         });
 

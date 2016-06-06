@@ -15,20 +15,24 @@ import java.io.File;
 import java.io.IOException;
 
 public class MainApp extends Application {
-    public static final int TILE_SIZE = 100;
 
+    public static final int TILE_SIZE = 100;
 
     private static Scene sceneLogin, sceneRegistration, sceneGame, sceneMainMenu;
 
-    public static  String USER_TOKEN;
+    public static String USER_TOKEN;
 
     public static Stage window;
 
+    public static Game game;
+
     public static Scene getSceneMainMenu() {
+        sceneMainMenu = new Scene(new MainMenu().getMainMenu(), 300, 250);
         return sceneMainMenu;
     }
 
     public static Scene getSceneGame() {
+        sceneGame = new Scene(new Game().getGame());
         return sceneGame;
     }
 
@@ -48,26 +52,25 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         window = primaryStage;
         sceneRegistration = new Scene(new Registration().getRegistration());
-        sceneGame = new Scene(new Game().getGame());
         sceneMainMenu = new Scene(new MainMenu().getMainMenu(), 300, 250);
         sceneLogin = new Scene(new Login().getLogin());
         sceneLogin.getStylesheets().add("/styles/login.css");
         sceneRegistration.getStylesheets().add("/styles/login.css");
-        USER_TOKEN = loadPersonDataFromFile().getToken();
-        if (loadPersonDataFromFile() != null) {
-            Request request = new Request();
-            try {
-                if (request.get("api/checkToken?token=" + USER_TOKEN).equals("true")) {
-                    primaryStage.setScene(sceneMainMenu);
-                } else {
-                    primaryStage.setScene(sceneLogin);
-                }
-            } catch (RequestError requestError) {
-                requestError.printStackTrace();
-            }
-        }else {
-            primaryStage.setScene(sceneLogin);
-        }
+//        USER_TOKEN = loadPersonDataFromFile().getToken();
+//        if (loadPersonDataFromFile() != null) {
+//            Request request = new Request();
+//            try {
+//                if (request.get("api/checkToken?token=" + USER_TOKEN).equals("true")) {
+//                    primaryStage.setScene(sceneMainMenu);
+//                } else {
+//                    primaryStage.setScene(sceneLogin);
+//                }
+//            } catch (RequestError requestError) {
+//                requestError.printStackTrace();
+//            }
+//        } else {
+        primaryStage.setScene(sceneLogin);
+//        }
         primaryStage.show();
     }
 
