@@ -49,20 +49,21 @@ public class Game {
                     ObjectMapper mapper = new ObjectMapper();
 
                     MoveDto obj = mapper.readValue(result, MoveDto.class);
-                    if (obj.getGameOver().equals("true")) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("End");
-                        alert.setHeaderText(null);
-                        alert.setContentText("You win");
-                        alert.show();
-                        fiveSecondsWonder.stop();
-                        pieceGroup.getChildren().removeAll();
-                        tileGroup.getChildren().removeAll();
-                        MainApp.window.setScene(getSceneMainMenu());
-                    } else {
-                        makeMove(obj);
-                        fiveSecondsWonder.stop();
-                    }
+//                    if (obj.getGameOver().equals("true")) {
+//                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                        alert.setTitle("End");
+//                        alert.setHeaderText(null);
+//                        alert.setContentText("You win");
+//                        alert.show();
+//                        fiveSecondsWonder.stop();
+//                        pieceGroup.getChildren().removeAll();
+//                        tileGroup.getChildren().removeAll();
+//                        MainApp.window.setScene(getSceneMainMenu());
+//                    } else {
+//
+//                    }
+                    makeMove(obj);
+                    fiveSecondsWonder.stop();
                 }
             } catch (RequestError requestError) {
                 requestError.printStackTrace();
@@ -324,11 +325,6 @@ public class Game {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("End");
         alert.setHeaderText(null);
-        if (count > 2) {
-            white = true;
-            red = false;
-        }
-        count++;
         if (red == true && white == false || white == true && red == false) {
             alert.setContentText(red ? "RED WIN!" : "WHITE WIN!");
             alert.show();
